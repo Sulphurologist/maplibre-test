@@ -35,6 +35,47 @@ map.on('load', () => {
   });
 });
 
+ map.setStyle('https://tiles.openfreemap.org/styles/liberty', {
+            transformStyle: (previousStyle, nextStyle) => {
+                nextStyle.projection = { type: 'globe' };
+                nextStyle.sources = {
+                    ...nextStyle.sources, terrainSource: {
+                        type: 'raster-dem',
+                        url: 'https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL',
+                        tileSize: 256
+                    },
+                    hillshadeSource: {
+                        type: 'raster-dem',
+                        url: 'https://api.maptiler.com/tiles/terrain-rgb-v2/tiles.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL',
+                        tileSize: 256
+                    }
+                }
+                nextStyle.terrain = {
+                    source: 'terrainSource',
+                    exaggeration: 1
+                }
+
+                nextStyle.sky = {
+                    'atmosphere-blend': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        0, 1,
+                        2, 0
+                    ],
+                }
+
+                nextStyle.layers.push({
+                    id: 'hills',
+                    type: 'hillshade',
+                    source: 'hillshadeSource',
+                    layout: { visibility: 'visible' },
+                    paint: { 'hillshade-shadow-color': '#473B24' }
+                })
+
+                return nextStyle
+            }
+        })
 // Popups
 map.on('click', 'dummy-fill', (e) => {
   const props = e.features[0].properties;
